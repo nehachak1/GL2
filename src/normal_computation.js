@@ -26,9 +26,32 @@ function compute_triangle_normals_and_angle_weights(mesh) {
 		const vert2 = get_vert(mesh, mesh.faces[3*i_face + 1])
 		const vert3 = get_vert(mesh, mesh.faces[3*i_face + 2])
 		
-		// Modify the way triangle normals and angle_weights are computed
-		tri_normals.push([1., 0., 0.])
-		angle_weights.push([1., 1., 1.])
+		const edge1 = vec3.subtract([], vert2, vert1); 
+		const edge2 = vec3.subtract([], vert3, vert1);
+
+		const cross_product = vec3.cross([], edge1, edge2)
+		vec3.normalize(cross_product,cross_product)
+		tri_normals.push(cross_product)
+
+		vec3.normalize(edge1, edge1); 
+		vec3.normalize(edge2, edge2); 
+		const edgeA = vec3.subtract([], vert2, vert3); 
+		const edgeB = vec3.subtract([], vert1, vert3); 
+		const edgeC = vec3.subtract([], vert1, vert2);
+
+		vec3.normalize(edgeA, edgeA);
+		vec3.normalize(edgeB, edgeB);
+		vec3.normalize(edgeC, edgeC);
+
+		const angle1 = Math.acos(vec3.dot(edgeA, edgeB)); 
+		const angle2 = Math.acos(vec3.dot(edgeC, edgeA));
+		const angle3 = Math.acos(vec3.dot(edgeB, edgeC));
+
+		const w1 = Math.abs(angle1);
+		const w2 = Math.abs(angle2);
+		const w3 = Math.abs(angle3);
+
+		angle_weights.push([w1, w2, w3])
 	}
 	return [tri_normals, angle_weights]
 }
@@ -51,15 +74,15 @@ function compute_vertex_normals(mesh, tri_normals, angle_weights) {
 		const iv3 = mesh.faces[3*i_face + 2]
 
 		const normal = tri_normals[i_face]
-
-		// Add your code for adding the contribution of the current triangle to its vertices' normals
-
+		const weights = angle_weights[i_face];
+		vertex_normals[iv1] = vec3.add(vertex_normals[iv1], vertex_normals[iv1], vec3.scale([], normal, weights[0]));
+		vertex_normals[iv2] = vec3.add(vertex_normals[iv2], vertex_normals[iv2], vec3.scale([], normal, weights[1]));
+		vertex_normals[iv3] = vec3.add(vertex_normals[iv3], vertex_normals[iv3], vec3.scale([], normal, weights[2]));
+		
 	}
 
 	for(let i_vertex = 0; i_vertex < num_vertices; i_vertex++) {
-		// Normalize the vertices
-
-		vertex_normals[i_vertex] = [1., 0., 0.]
+		vec3.normalize(vertex_normals[i_vertex], vertex_normals[i_vertex]);
 	}
 
 	return vertex_normals
