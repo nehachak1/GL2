@@ -19,13 +19,11 @@ void main() {
 	/* #TODO GL2.2.1 
 		Pass the normal to the fragment shader by assigning your vertex-to-fragment variable.
 	*/
-	frag_normal = mat3(mat_normals_to_view) * vertex_normal;
+	frag_normal = (mat_normals_to_view)*vertex_normal;
 
 	/* #TODO GL2.2.2
 		Transform the normals to camera space.
 	*/
 	
 	gl_Position = mat_mvp * vec4(vertex_position, 1.0);
-
-	gl_Position = mat_mvp * vec4(vertex_position, 1);
 }
