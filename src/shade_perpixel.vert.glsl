@@ -10,9 +10,9 @@ attribute vec3 vertex_normal;
 	* lighting vector: direction to light
 	* view vector: direction to camera
 */
-//varying ...
-//varying ...
-//varying ...
+varying vec3 surface_normal;
+varying vec3 view_vector;
+varying vec3 light_vector;
 
 // Global variables specified in "uniforms" entry of the pipeline
 uniform mat4 mat_mvp;
@@ -34,11 +34,26 @@ void main() {
 	Hint: Compute the vertex position, normal and light_position in view space. 
     */
 	// viewing vector (from camera to vertex in view coordinates), camera is at vec3(0, 0, 0) in cam coords
-	//v2f_dir_from_view = vec3(1, 0, 0); // TODO calculate
+	/*view_vector = (vertex_position); // TODO vertex_position - cam pos but the latter is 0,0,0
 	// direction to light source
-	//v2f_dir_to_light = vec3(0, 1, 0); // TODO calculate
+	light_vector = (vertex_position - light_position); // TODO 
 	// transform normal to camera coordinates
-	//v2f_normal = normal; // TODO apply normal transformation
+	surface_normal = (mat_normals_to_view * vertex_normal); // TODO apply normal transformation
 	
-	gl_Position = vec4(vertex_position, 1);
+	gl_Position = vec4(vertex_position, 1);*/
+	
+	// 1. Transform vertex position to view space
+    vec3 vertex_pos_view = vec3(mat_model_view * vec4(vertex_position, 1.0));
+
+    // 2. Compute the view vector (camera is at (0,0,0) in view space)
+    view_vector = -vertex_pos_view;
+
+    // 3. Compute the light vector (from vertex to light source)
+    light_vector = (light_position - vertex_pos_view);
+
+    // 4. Transform normal to camera space and normalize
+    surface_normal = normalize(mat_normals_to_view * vertex_normal);
+
+    // 5. Compute final position for rasterization
+    gl_Position = mat_mvp * vec4(vertex_position, 1.0);
 }
