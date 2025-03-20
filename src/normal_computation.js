@@ -38,9 +38,9 @@ function compute_triangle_normals_and_angle_weights(mesh) {
 		vec3.normalize(cross_product,cross_product)
 		tri_normals.push(cross_product)
 
-		const angle1 = Math.acos(vec3.dot(edge1, edge2)); 
-		const angle2 = Math.acos(vec3.dot(edge3, edge1));
-		const angle3 = Math.acos(vec3.dot(edge2, edge3));
+		const angle1 = vec3.angle(edge1, edge2); 
+		const angle2 = vec3.angle(edge3, edge1); 
+		const angle3 = vec3.angle(edge2, edge3); 
 
 		const w1 = Math.abs(angle1);
 		const w2 = Math.abs(angle2);
@@ -70,9 +70,9 @@ function compute_vertex_normals(mesh, tri_normals, angle_weights) {
 
 		const normal = tri_normals[i_face]
 		const weights = angle_weights[i_face];
-		vertex_normals[iv1] = vec3.add(vertex_normals[iv1], vertex_normals[iv1], vec3.scale([], normal, weights[0]));
-		vertex_normals[iv2] = vec3.add(vertex_normals[iv2], vertex_normals[iv2], vec3.scale([], normal, weights[1]));
-		vertex_normals[iv3] = vec3.add(vertex_normals[iv3], vertex_normals[iv3], vec3.scale([], normal, weights[2]));
+		vec3.add(vertex_normals[iv1], vertex_normals[iv1], vec3.scale([], normal, weights[0]));
+		vec3.add(vertex_normals[iv2], vertex_normals[iv2], vec3.scale([], normal, weights[1]));
+		vec3.add(vertex_normals[iv3], vertex_normals[iv3], vec3.scale([], normal, weights[2]));
 		
 	}
 
