@@ -28,24 +28,19 @@ function compute_triangle_normals_and_angle_weights(mesh) {
 		
 		const edge1 = vec3.subtract([], vert2, vert1); 
 		const edge2 = vec3.subtract([], vert3, vert1);
+		const edge3 = vec3.subtract([], vert2, vert3); 
+
+		vec3.normalize(edge1, edge1); 
+		vec3.normalize(edge2, edge2); 
+		vec3.normalize(edge3, edge3);
 
 		const cross_product = vec3.cross([], edge1, edge2)
 		vec3.normalize(cross_product,cross_product)
 		tri_normals.push(cross_product)
 
-		vec3.normalize(edge1, edge1); 
-		vec3.normalize(edge2, edge2); 
-		const edgeA = vec3.subtract([], vert2, vert3); 
-		const edgeB = vec3.subtract([], vert1, vert3); 
-		const edgeC = vec3.subtract([], vert1, vert2);
-
-		vec3.normalize(edgeA, edgeA);
-		vec3.normalize(edgeB, edgeB);
-		vec3.normalize(edgeC, edgeC);
-
-		const angle1 = Math.acos(vec3.dot(edgeA, edgeB)); 
-		const angle2 = Math.acos(vec3.dot(edgeC, edgeA));
-		const angle3 = Math.acos(vec3.dot(edgeB, edgeC));
+		const angle1 = Math.acos(vec3.dot(edge1, edge2)); 
+		const angle2 = Math.acos(vec3.dot(edge3, edge1));
+		const angle3 = Math.acos(vec3.dot(edge2, edge3));
 
 		const w1 = Math.abs(angle1);
 		const w2 = Math.abs(angle2);

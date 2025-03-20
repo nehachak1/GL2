@@ -184,25 +184,27 @@ async function main() {
 	const cam_distance_base = 15.
 
 	function update_cam_transform(frame_info) {
-		const {cam_angle_z, cam_angle_y, cam_distance_factor} = frame_info
-
-		/* TODO GL1.2.2
-		Calculate the world-to-camera transformation matrix for turntable camera.
-		The camera orbits the scene 
-		* cam_distance_base * cam_distance_factor = distance of the camera from the (0, 0, 0) point
-		* cam_angle_z - camera ray's angle around the Z axis
-		* cam_angle_y - camera ray's angle around the Y axis
-		*/
-
-		// Example camera matrix, looking along forward-X, edit this
-		const look_at = mat4.lookAt(mat4.create(), 
-			[-5, 0, 0], // camera position in world coord
-			[0, 0, 0], // view target point
-			[0, 0, 1], // up vector
-		)
-		// Store the combined transform in mat_turntable
-		// frame_info.mat_turntable = A * B * ...
-		mat4_matmul_many(frame_info.mat_turntable, look_at) // edit this
+		const { cam_angle_z, cam_angle_y, cam_distance_factor } = frame_info;
+	
+		// Calculate the distance of the camera from the origin (0, 0, 0)
+		const r = cam_distance_base * cam_distance_factor;
+	
+		// Calculate the camera position using spherical coordinates - left hand system
+		const camera_position = [
+			-r * Math.cos(cam_angle_y) * Math.cos(cam_angle_z), // X 
+			r * Math.cos(cam_angle_y) * Math.sin(cam_angle_z), // Y
+			-r * Math.sin(cam_angle_y) // Z 
+		];
+	
+		// Use mat4.lookAt to create the camera's view matrix, looking at the origin [0, 0, 0]
+		const look_at = mat4.lookAt(mat4.create(),
+			camera_position, // Camera position in world coordinates
+			[0, 0, 0], // The camera always looks at the origin
+			[0, 0, 1]  // The up vector (positive Z direction)
+		);
+	
+		// Store the resulting view matrix in frame_info.mat_turntable
+		frame_info.mat_turntable = look_at;
 	}
 
 	update_cam_transform(frame_info)
