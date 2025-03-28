@@ -40,7 +40,7 @@ function compute_triangle_normals_and_angle_weights(mesh) {
 
 		const angle1 = vec3.angle(edge1, edge2); 
 		const angle2 = vec3.angle(edge3, edge1); 
-		const angle3 = vec3.angle(edge2, edge3); 
+		const angle3 = vec3.angle(edge3, edge2); 
 
 		const w1 = Math.abs(angle1);
 		const w2 = Math.abs(angle2);
